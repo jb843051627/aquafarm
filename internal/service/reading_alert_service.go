@@ -66,9 +66,6 @@ func (s *Service) BatchIngestReadings(ctx context.Context, readings []model.Sens
 
 	// Check thresholds for all readings
 	for _, r := range readings {
-		if ctxErr := ctx.Err(); ctxErr != nil {
-			break
-		}
 		tank, err := s.repo.Tanks().GetByID(r.TankID)
 		if err != nil || tank == nil {
 			continue
