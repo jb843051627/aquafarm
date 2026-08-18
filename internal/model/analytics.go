@@ -262,20 +262,23 @@ func PaginateResults[T any](items []T, page, pageSize int) ([]T, int) {
 }
 
 // SortAlertsBySeverity sorts alerts: critical first, then warning, then by time descending.
+// A defensive copy is made so the caller's slice is not mutated.
 func SortAlertsBySeverity(alerts []Alert) []Alert {
-	sort.Slice(alerts, func(i, j int) bool {
+	sorted := make([]Alert, len(alerts))
+	copy(sorted, alerts)
+	sort.Slice(sorted, func(i, j int) bool {
 		// Unresolved first
-		if alerts[i].Resolved != alerts[j].Resolved {
-			return !alerts[i].Resolved
+		if sorted[i].Resolved != sorted[j].Resolved {
+			return !sorted[i].Resolved
 		}
 		// Critical before warning
-		if alerts[i].Severity != alerts[j].Severity {
-			return alerts[i].Severity == SeverityCritical
+		if sorted[i].Severity != sorted[j].Severity {
+			return sorted[i].Severity == SeverityCritical
 		}
 		// Newer first
-		return alerts[i].CreatedAt.After(alerts[j].CreatedAt)
+		return sorted[i].CreatedAt.After(sorted[j].CreatedAt)
 	})
-	return alerts
+	return sorted
 }
 
 // SortReadingsByTimestamp sorts readings ascending by timestamp.
