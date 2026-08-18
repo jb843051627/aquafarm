@@ -152,7 +152,7 @@ func (s *Service) CompleteMaintenanceTask(ctx context.Context, id int64, technic
 		return model.ErrNotFound
 	}
 	if task.Status == model.TaskCompleted {
-		return &model.ValidationError{Field: "status", Message: "task already completed"}
+		return fmt.Errorf("task %d already completed", id)
 	}
 
 	// Complete the task
