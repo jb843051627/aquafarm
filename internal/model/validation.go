@@ -223,6 +223,9 @@ func splitSchedule(s string) []string {
 
 // ComputeStockDensity returns fish per liter.
 func ComputeStockDensity(tank *Tank) float64 {
+	if tank == nil {
+		return 0
+	}
 	if tank.Capacity <= 0 {
 		return 0
 	}
@@ -231,6 +234,9 @@ func ComputeStockDensity(tank *Tank) float64 {
 
 // ComputeSurvivalRate returns survival rate as a percentage.
 func ComputeSurvivalRate(b *Batch) float64 {
+	if b == nil {
+		return 0
+	}
 	if b.InitialCount <= 0 {
 		return 0
 	}
