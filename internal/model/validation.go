@@ -184,6 +184,8 @@ func ValidateBatch(b *Batch) error {
 }
 
 // ParseSchedule parses a cron-like schedule string "08:00,16:00" into time slots.
+// Times are parsed in the local timezone so they align with the farm's
+// operating hours and can be compared correctly in ComputeDailyStats.
 func ParseSchedule(schedule string) ([]time.Time, error) {
 	if schedule == "" {
 		return nil, &ValidationError{Field: "schedule", Message: "empty schedule"}
@@ -191,12 +193,13 @@ func ParseSchedule(schedule string) ([]time.Time, error) {
 	parts := splitSchedule(schedule)
 	slots := make([]time.Time, 0, len(parts))
 	now := time.Now()
+	localLoc := now.Location()
 	for _, p := range parts {
-		t, err := time.ParseInLocation("15:04", p, time.UTC)
+		t, err := time.ParseInLocation("15:04", p, localLoc)
 		if err != nil {
 			return nil, &ValidationError{Field: "schedule", Message: fmt.Sprintf("invalid time slot: %s", p)}
 		}
-		slot := time.Date(now.Year(), now.Month(), now.Day(), t.Hour(), t.Minute(), 0, 0, now.Location())
+		slot := time.Date(now.Year(), now.Month(), now.Day(), t.Hour(), t.Minute(), 0, 0, localLoc)
 		slots = append(slots, slot)
 	}
 	return slots, nil
