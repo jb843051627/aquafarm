@@ -45,6 +45,9 @@ func (s *Service) GetTank(ctx context.Context, id int64) (*model.Tank, error) {
 	if err != nil {
 		return nil, fmt.Errorf("get tank %d: %w", id, err)
 	}
+	if tank == nil {
+		return nil, model.ErrNotFound
+	}
 	return tank, nil
 }
 

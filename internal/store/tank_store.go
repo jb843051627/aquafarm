@@ -34,7 +34,7 @@ func (s *TankStore) Create(t *model.Tank) error {
 	return nil
 }
 
-// GetByID retrieves a tank by ID. Returns nil, nil if not found (bug: should return error).
+// GetByID retrieves a tank by ID. Returns model.ErrNotFound if not found.
 func (s *TankStore) GetByID(id int64) (*model.Tank, error) {
 	row := s.db.QueryRow(
 		`SELECT id, name, species, capacity, stock_qty, status, created_at, updated_at
@@ -43,7 +43,7 @@ func (s *TankStore) GetByID(id int64) (*model.Tank, error) {
 	t := &model.Tank{}
 	err := row.Scan(&t.ID, &t.Name, &t.Species, &t.Capacity, &t.StockQty, &t.Status, &t.CreatedAt, &t.UpdatedAt)
 	if err == sql.ErrNoRows {
-		return nil, nil
+		return nil, model.ErrNotFound
 	}
 	if err != nil {
 		return nil, err
