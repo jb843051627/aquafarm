@@ -124,7 +124,9 @@ func (s *Service) CreateFeedPlan(ctx context.Context, f *model.FeedPlan) (*model
 	}
 
 	// Verify tank exists
-	tank, err := s.repo.Tanks().GetByID(f.TankID)
+	var tank *model.Tank
+	var err error
+	tank, err = s.repo.Tanks().GetByID(f.TankID)
 	if err != nil {
 		return nil, fmt.Errorf("check tank: %w", err)
 	}
