@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"aquafarm/internal/model"
 )
@@ -19,12 +20,12 @@ func (r *Repo) Cleanup(tankID int64) error {
 		`DELETE FROM alerts WHERE tank_id = ?`,
 		`DELETE FROM feed_plans WHERE tank_id = ?`,
 		`DELETE FROM feed_logs WHERE tank_id = ?`,
+		`DELETE FROM maintenance_tasks WHERE equipment_id IN (SELECT id FROM equipment WHERE tank_id = ?)`,
 		`DELETE FROM equipment WHERE tank_id = ?`,
 		`DELETE FROM water_changes WHERE tank_id = ?`,
 		`DELETE FROM mortality_logs WHERE tank_id = ?`,
 		`DELETE FROM threshold_configs WHERE tank_id = ?`,
 		`DELETE FROM batches WHERE tank_id = ?`,
-		`DELETE FROM maintenance_tasks WHERE equipment_id IN (SELECT id FROM equipment WHERE tank_id = ?)`,
 	}
 
 	for _, q := range tables {
@@ -80,7 +81,7 @@ func (r *Repo) GetTankSummary(tankID int64) (*TankSummary, error) {
 	}
 
 	// Unresolved alert count
-	alertCount, err := r.alerts.CountUnresolved()
+	alertCount, err := r.alerts.CountUnresolvedByTank(tankID)
 	if err != nil {
 		return nil, err
 	}
@@ -150,11 +151,23 @@ func (r *Repo) GetSystemOverview() (*SystemOverview, error) {
 	}
 	overview.TotalCapacity = capacity
 
+	// Total feed amount logged today
+	today := time.Now().Format("2006-01-02")
+	var feedToday float64
+	err = r.db.QueryRow(
+		`SELECT COALESCE(SUM(amount), 0) FROM feed_logs WHERE substr(timestamp, 1, 10) = ?`, today,
+	).Scan(&feedToday)
+	if err != nil {
+		return nil, err
+	}
+	overview.TotalFeedToday = feedToday
+
 	unresolved, err := r.alerts.CountUnresolved()
 	if err != nil {
 		return nil, err
 	}
 	overview.UnresolvedAlerts = unresolved
+	overview.ActiveAlerts = unresolved
 
 	running, err := r.equip.ListByStatus(model.EquipmentRunning)
 	if err != nil && err != sql.ErrNoRows {

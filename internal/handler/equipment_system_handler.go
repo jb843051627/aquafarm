@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"time"
@@ -30,7 +31,7 @@ func (h *Handler) CreateEquipment(c *gin.Context) {
 	created, err := h.svc.CreateEquipment(c.Request.Context(), &e)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {
@@ -50,7 +51,7 @@ func (h *Handler) GetEquipment(c *gin.Context) {
 	}
 	eq, err := h.svc.GetEquipment(c.Request.Context(), id)
 	if err != nil {
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "equipment not found"})
 			return
 		}
@@ -115,7 +116,7 @@ func (h *Handler) GetEquipmentHealth(c *gin.Context) {
 	}
 	score, err := h.svc.GetEquipmentHealth(c.Request.Context(), id)
 	if err != nil {
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "equipment not found"})
 			return
 		}
@@ -146,7 +147,7 @@ func (h *Handler) CreateMaintenanceTask(c *gin.Context) {
 	created, err := h.svc.CreateMaintenanceTask(c.Request.Context(), &t)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {
@@ -166,7 +167,7 @@ func (h *Handler) GetMaintenanceTask(c *gin.Context) {
 	}
 	task, err := h.svc.GetMaintenanceTask(c.Request.Context(), id)
 	if err != nil {
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "task not found"})
 			return
 		}
@@ -188,7 +189,7 @@ func (h *Handler) CompleteMaintenanceTask(c *gin.Context) {
 	_ = c.ShouldBindJSON(&body)
 	if err := h.svc.CompleteMaintenanceTask(c.Request.Context(), id, body.Technician); err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {
@@ -229,7 +230,7 @@ func (h *Handler) CreateBatch(c *gin.Context) {
 	created, err := h.svc.CreateBatch(c.Request.Context(), &b)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {
@@ -272,7 +273,7 @@ func (h *Handler) RecordMortality(c *gin.Context) {
 	}
 	if err := h.svc.RecordMortality(c.Request.Context(), tankID, body.Count, body.Cause, body.Note); err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {
@@ -319,7 +320,7 @@ func (h *Handler) RecordWaterChange(c *gin.Context) {
 	created, err := h.svc.RecordWaterChange(c.Request.Context(), &w)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {
@@ -357,7 +358,7 @@ func (h *Handler) SaveThreshold(c *gin.Context) {
 	saved, err := h.svc.SaveThreshold(c.Request.Context(), &t)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {

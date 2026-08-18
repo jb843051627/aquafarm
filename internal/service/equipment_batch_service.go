@@ -329,7 +329,9 @@ func (s *Service) GetDailySummary(ctx context.Context, tankID int64, date time.T
 		}
 	}
 
-	return model.ComputeDailyStats(readings, feedLogs, mortality), nil
+	summary := model.ComputeDailyStats(readings, feedLogs, mortality)
+	summary.TankID = tankID
+	return summary, nil
 }
 
 // GetSystemConfig returns a config value.

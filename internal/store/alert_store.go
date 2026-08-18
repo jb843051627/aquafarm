@@ -186,6 +186,13 @@ func (s *AlertStore) CountUnresolved() (int, error) {
 	return count, err
 }
 
+// CountUnresolvedByTank returns count of unresolved alerts for a tank.
+func (s *AlertStore) CountUnresolvedByTank(tankID int64) (int, error) {
+	var count int
+	err := s.db.QueryRow(`SELECT COUNT(*) FROM alerts WHERE resolved = 0 AND tank_id = ?`, tankID).Scan(&count)
+	return count, err
+}
+
 // CountBySeverity returns alert counts grouped by severity.
 func (s *AlertStore) CountBySeverity() (map[string]int, error) {
 	rows, err := s.db.Query(

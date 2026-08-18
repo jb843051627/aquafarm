@@ -280,10 +280,21 @@ func FormatAlertMessage(tankName, sensorType string, value, min, max float64, se
 
 // ComputeDailyStats aggregates readings into a daily summary.
 func ComputeDailyStats(readings []SensorReading, feeds []FeedLog, mortality int) *DailySummary {
-	if len(readings) == 0 {
-		return &DailySummary{Mortality: mortality}
+	feedTotal := 0.0
+	for _, f := range feeds {
+		feedTotal += f.Amount
 	}
-	tempSum, phSum, count := 0.0, 0.0, 0
+
+	summary := &DailySummary{
+		FeedTotal: feedTotal,
+		Mortality: mortality,
+	}
+
+	if len(readings) == 0 {
+		return summary
+	}
+
+	tempSum, phSum, tempCount, phCount := 0.0, 0.0, 0, 0
 	minOxygen := 999.0
 	maxAmmonia := 0.0
 	date := ""
@@ -291,9 +302,10 @@ func ComputeDailyStats(readings []SensorReading, feeds []FeedLog, mortality int)
 		switch r.Type {
 		case SensorTemperature:
 			tempSum += r.Value
-			count++
+			tempCount++
 		case SensorPH:
 			phSum += r.Value
+			phCount++
 		case SensorOxygen:
 			if r.Value < minOxygen {
 				minOxygen = r.Value
@@ -307,21 +319,13 @@ func ComputeDailyStats(readings []SensorReading, feeds []FeedLog, mortality int)
 			date = r.Timestamp.Format("2006-01-02")
 		}
 	}
-	feedTotal := 0.0
-	for _, f := range feeds {
-		feedTotal += f.Amount
+	summary.Date = date
+	summary.MaxAmmonia = maxAmmonia
+	if tempCount > 0 {
+		summary.AvgTemp = tempSum / float64(tempCount)
 	}
-	summary := &DailySummary{
-		Date:       date,
-		MaxAmmonia: maxAmmonia,
-		FeedTotal:  feedTotal,
-		Mortality:  mortality,
-	}
-	if count > 0 {
-		summary.AvgTemp = tempSum / float64(count)
-	}
-	if len(readings) > 0 {
-		summary.AvgPH = phSum / float64(len(readings))
+	if phCount > 0 {
+		summary.AvgPH = phSum / float64(phCount)
 	}
 	if minOxygen < 999 {
 		summary.MinOxygen = minOxygen

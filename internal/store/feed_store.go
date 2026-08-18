@@ -203,7 +203,7 @@ func (s *FeedStore) GetFeedTotalByDate(tankID int64, date string) (float64, erro
 	var total float64
 	err := s.db.QueryRow(
 		`SELECT COALESCE(SUM(amount), 0) FROM feed_logs
-		 WHERE tank_id = ? AND DATE(timestamp) = ?`, tankID, date,
+		 WHERE tank_id = ? AND substr(timestamp, 1, 10) = ?`, tankID, date,
 	).Scan(&total)
 	return total, err
 }
@@ -212,7 +212,7 @@ func (s *FeedStore) GetFeedTotalByDate(tankID int64, date string) (float64, erro
 func (s *FeedStore) ListFeedLogsByDate(tankID int64, date string) ([]model.FeedLog, error) {
 	rows, err := s.db.Query(
 		`SELECT id, tank_id, plan_id, feed_type, amount, source, timestamp
-		 FROM feed_logs WHERE tank_id = ? AND DATE(timestamp) = ?
+		 FROM feed_logs WHERE tank_id = ? AND substr(timestamp, 1, 10) = ?
 		 ORDER BY timestamp ASC`, tankID, date,
 	)
 	if err != nil {

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -149,7 +150,7 @@ func (h *Handler) GetTank(c *gin.Context) {
 	}
 	tank, err := h.svc.GetTank(c.Request.Context(), id)
 	if err != nil {
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "tank not found"})
 			return
 		}
@@ -214,7 +215,7 @@ func (h *Handler) GetTankSummary(c *gin.Context) {
 	}
 	summary, err := h.svc.GetTankSummary(c.Request.Context(), id)
 	if err != nil {
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "tank not found"})
 			return
 		}
