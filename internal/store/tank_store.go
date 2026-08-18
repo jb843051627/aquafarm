@@ -43,7 +43,7 @@ func (s *TankStore) GetByID(id int64) (*model.Tank, error) {
 	t := &model.Tank{}
 	err := row.Scan(&t.ID, &t.Name, &t.Species, &t.Capacity, &t.StockQty, &t.Status, &t.CreatedAt, &t.UpdatedAt)
 	if err == sql.ErrNoRows {
-		return nil, nil // BUG-001: returns nil,nil instead of ErrNotFound
+		return nil, model.ErrNotFound
 	}
 	if err != nil {
 		return nil, err
@@ -60,7 +60,7 @@ func (s *TankStore) GetByName(name string) (*model.Tank, error) {
 	t := &model.Tank{}
 	err := row.Scan(&t.ID, &t.Name, &t.Species, &t.Capacity, &t.StockQty, &t.Status, &t.CreatedAt, &t.UpdatedAt)
 	if err == sql.ErrNoRows {
-		return nil, nil
+		return nil, model.ErrNotFound
 	}
 	if err != nil {
 		return nil, err
