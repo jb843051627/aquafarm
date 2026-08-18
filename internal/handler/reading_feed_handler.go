@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -26,7 +27,7 @@ func (h *Handler) IngestReading(c *gin.Context) {
 	created, err := h.svc.IngestReading(c.Request.Context(), &r)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {
@@ -156,7 +157,7 @@ func (h *Handler) ResolveAlert(c *gin.Context) {
 	}
 	if err := h.svc.ResolveAlert(c.Request.Context(), id); err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {
@@ -211,7 +212,7 @@ func (h *Handler) CreateFeedPlan(c *gin.Context) {
 	created, err := h.svc.CreateFeedPlan(c.Request.Context(), &f)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {
@@ -283,7 +284,7 @@ func (h *Handler) ExecuteScheduledFeed(c *gin.Context) {
 	log, err := h.svc.ExecuteScheduledFeed(c.Request.Context(), id)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {
@@ -312,7 +313,7 @@ func (h *Handler) RecordManualFeed(c *gin.Context) {
 	log, err := h.svc.RecordManualFeed(c.Request.Context(), tankID, body.FeedType, body.Amount)
 	if err != nil {
 		status := http.StatusInternalServerError
-		if err == model.ErrNotFound {
+		if errors.Is(err, model.ErrNotFound) {
 			status = http.StatusNotFound
 		}
 		if _, ok := err.(*model.ValidationError); ok {
