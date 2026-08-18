@@ -64,8 +64,13 @@ func (s *Service) BatchIngestReadings(ctx context.Context, readings []model.Sens
 		return 0, fmt.Errorf("batch insert readings: %w", err)
 	}
 
-	// Check thresholds for all readings
+	// Check thresholds for all readings.
+	// We must check ctx.Err() at the start of each iteration so that
+	// a cancelled context stops processing remaining readings promptly.
 	for _, r := range readings {
+		if ctxErr := ctx.Err(); ctxErr != nil {
+			break
+		}
 		tank, err := s.repo.Tanks().GetByID(r.TankID)
 		if err != nil || tank == nil {
 			continue
