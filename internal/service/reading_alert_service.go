@@ -248,8 +248,8 @@ func NewReadingCache() *readingCache {
 
 // Update stores the latest reading in the cache.
 func (c *readingCache) Update(r model.SensorReading) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	c.mu.RLock()
+	defer c.mu.RUnlock()
 	if _, ok := c.latest[r.TankID]; !ok {
 		c.latest[r.TankID] = make(map[string]model.SensorReading)
 	}
