@@ -151,8 +151,13 @@ func (s *Service) CompleteMaintenanceTask(ctx context.Context, id int64, technic
 	if task == nil {
 		return model.ErrNotFound
 	}
+	// Use model.ValidationError so callers can detect this via errors.As.
+	// Returning fmt.Errorf would make errors.Is/As fail for this case.
 	if task.Status == model.TaskCompleted {
-		return fmt.Errorf("task %d already completed", id)
+		return &model.ValidationError{Field: "status", Message: "task already completed"}
+	}
+	if technician == "" {
+		return &model.ValidationError{Field: "technician", Message: "technician name is required"}
 	}
 
 	// Complete the task
