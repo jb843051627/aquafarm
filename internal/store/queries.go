@@ -29,13 +29,13 @@ func (r *Repo) Cleanup(tankID int64) error {
 
 	for _, q := range tables {
 		if _, err := tx.Exec(q, tankID); err != nil {
-			tx.Rollback()
+			defer tx.Rollback()
 			return fmt.Errorf("cleanup failed for tank %d: %w", tankID, err)
 		}
 	}
 
 	if _, err := tx.Exec(`DELETE FROM tanks WHERE id = ?`, tankID); err != nil {
-		tx.Rollback()
+		defer tx.Rollback()
 		return err
 	}
 
