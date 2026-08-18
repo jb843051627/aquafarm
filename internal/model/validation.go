@@ -192,7 +192,7 @@ func ParseSchedule(schedule string) ([]time.Time, error) {
 	slots := make([]time.Time, 0, len(parts))
 	now := time.Now()
 	for _, p := range parts {
-		t, err := time.Parse("15:04", p)
+		t, err := time.ParseInLocation("15:04", p, time.UTC)
 		if err != nil {
 			return nil, &ValidationError{Field: "schedule", Message: fmt.Sprintf("invalid time slot: %s", p)}
 		}
