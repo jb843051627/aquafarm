@@ -223,7 +223,7 @@ func splitSchedule(s string) []string {
 
 // ComputeStockDensity returns fish per liter.
 func ComputeStockDensity(tank *Tank) float64 {
-	if tank.Capacity <= 0 {
+	if tank == nil || tank.Capacity <= 0 {
 		return 0
 	}
 	return float64(tank.StockQty) / tank.Capacity
