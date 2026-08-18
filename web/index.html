@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaFarm - RAS Monitor</title>
+    <link rel="stylesheet" href="/web/static/style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>AquaFarm RAS Monitor</h1>
+            <nav>
+                <button class="tab-btn active" data-tab="tanks">Tanks</button>
+                <button class="tab-btn" data-tab="alerts">Alerts</button>
+                <button class="tab-btn" data-tab="feed">Feed Plans</button>
+                <button class="tab-btn" data-tab="equipment">Equipment</button>
+                <button class="tab-btn" data-tab="overview">Overview</button>
+            </nav>
+        </header>
+        <main>
+            <section id="tab-tanks" class="tab-content active">
+                <h2>Fish Tanks</h2>
+                <div id="tank-list" class="card-grid"></div>
+            </section>
+            <section id="tab-alerts" class="tab-content">
+                <h2>Active Alerts</h2>
+                <div id="alert-list"></div>
+            </section>
+            <section id="tab-feed" class="tab-content">
+                <h2>Feed Plans</h2>
+                <div id="feed-list"></div>
+            </section>
+            <section id="tab-equipment" class="tab-content">
+                <h2>Equipment</h2>
+                <div id="equipment-list" class="card-grid"></div>
+            </section>
+            <section id="tab-overview" class="tab-content">
+                <h2>System Overview</h2>
+                <div id="overview-stats"></div>
+            </section>
+        </main>
+    </div>
+    <script src="/web/static/app.js"></script>
+</body>
+</html>
