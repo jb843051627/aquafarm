@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sort"
 	"sync"
 	"time"
 
@@ -282,11 +281,5 @@ func (c *readingCache) AddAlert(a model.Alert) {
 func (c *readingCache) GetAlerts(tankID int64) []model.Alert {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	alerts := c.alerts[tankID]
-	result := make([]model.Alert, len(alerts))
-	copy(result, alerts)
-	sort.Slice(result, func(i, j int) bool {
-		return result[i].CreatedAt.After(result[j].CreatedAt)
-	})
-	return result
+	return c.alerts[tankID]
 }
