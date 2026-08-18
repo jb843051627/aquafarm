@@ -43,7 +43,7 @@ func (s *TankStore) GetByID(id int64) (*model.Tank, error) {
 	t := &model.Tank{}
 	err := row.Scan(&t.ID, &t.Name, &t.Species, &t.Capacity, &t.StockQty, &t.Status, &t.CreatedAt, &t.UpdatedAt)
 	if err == sql.ErrNoRows {
-		return nil, model.ErrNotFound
+		return nil, nil
 	}
 	if err != nil {
 		return nil, err
