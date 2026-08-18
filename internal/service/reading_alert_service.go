@@ -281,5 +281,8 @@ func (c *readingCache) AddAlert(a model.Alert) {
 func (c *readingCache) GetAlerts(tankID int64) []model.Alert {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.alerts[tankID]
+	alerts := c.alerts[tankID]
+	result := make([]model.Alert, len(alerts))
+	copy(result, alerts)
+	return result
 }
