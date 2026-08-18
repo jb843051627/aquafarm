@@ -59,9 +59,6 @@ func (s *Service) ComputeStockDensity(ctx context.Context, tankID int64) (float6
 	if err != nil {
 		return 0, fmt.Errorf("get tank: %w", err)
 	}
-	if tank == nil {
-		return 0, model.ErrNotFound
-	}
 	return model.ComputeStockDensity(tank), nil
 }
 
