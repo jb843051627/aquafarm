@@ -134,7 +134,7 @@ func (s *Service) CreateFeedPlan(ctx context.Context, f *model.FeedPlan) (*model
 		return nil, model.ErrNotFound
 	}
 
-	if err := s.repo.Feeds().CreatePlan(f); err != nil {
+	if err = s.repo.Feeds().CreatePlan(f); err != nil {
 		return nil, fmt.Errorf("create feed plan: %w", err)
 	}
 	return f, nil
